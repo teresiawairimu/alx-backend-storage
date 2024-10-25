@@ -1,0 +1,4 @@
+// MongoDB command that deletes all documents with specified name in a collection
+db.school.deleteMany(
+{ name: "Holberton school" }
+)
