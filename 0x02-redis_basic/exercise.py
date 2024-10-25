@@ -12,6 +12,24 @@ DataType = Union[str, int, float, bytes]
 ConvertFunction = Optional[Callable[[bytes], DataType]]
 
 
+def count_calls(method: Callable) -> Callable:
+    """Decorator to count the number of times a method is called
+
+    Parameters
+    method: Callable
+        The method to be decorated
+    Returns
+    Callable
+        The decorated method with a call count increment.
+    """
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        key = method.__qualname__
+        self.__redis.incr(key)
+        return method(self, *args, **kwargs)
+    return wrapper
+
+
 class Cache:
     """A class used to interact with a Redis cache to store and retrieve data.
     Attributes
@@ -80,21 +98,3 @@ class Cache:
             The retrieved value as an integer, None if the key doesn't exist
         """
         return self.get(key, int)
-
-    def count_calls(method: Callable) -> Callable:
-        """Decorator to count the number of times a method is called
-
-        Parameters
-        method: Callable
-            The method to be decorated
-
-        Returns
-        Callable
-            The decorated method with a call count increment.
-        """
-        @wraps(method)
-        def wrapper(self, *args, **kwargs):
-            key = method.__qualname__
-            self._redis.incr(key)
-            return method(self, *args, **kwargs)
-        return wrapper
