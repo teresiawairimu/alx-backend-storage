@@ -1,1 +1,3 @@
+// A MongoDB command to list all databases
 show dbs
+
