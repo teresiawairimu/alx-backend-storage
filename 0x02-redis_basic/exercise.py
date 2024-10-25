@@ -4,6 +4,8 @@
 import redis
 import uuid
 from typing import Union, Callable, Optional
+from functools import wraps
+
 
 """Data type aliases"""
 DataType = Union[str, int, float, bytes]
@@ -78,3 +80,21 @@ class Cache:
             The retrieved value as an integer, None if the key doesn't exist
         """
         return self.get(key, int)
+
+    def count_calls(method: Callable) -> Callable:
+        """Decorator to count the number of times a method is called
+
+        Parameters
+        method: Callable
+            The method to be decorated
+
+        Returns
+        Callable
+            The decorated method with a call count increment.
+        """
+        @wraps(method)
+        def wrapper(self, *args, **kwargs):
+            key = method.__qualname__
+            self._redis.incr(key)
+            return method(self, *args, **kwargs)
+        return wrapper
