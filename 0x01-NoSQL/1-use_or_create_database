@@ -1,0 +1,2 @@
+// A MongoDB command that create or uses the database 
+use my_db
