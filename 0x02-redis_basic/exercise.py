@@ -25,7 +25,7 @@ def count_calls(method: Callable) -> Callable:
     @wraps(method)
     def wrapper(self, *args, **kwargs):
         key = method.__qualname__
-        self.__redis.incr(key)
+        self._redis.incr(key)
         return method(self, *args, **kwargs)
     return wrapper
 
@@ -42,6 +42,7 @@ class Cache:
         self. _redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """Stores given data in Redis, returns a radomly generated key
 
