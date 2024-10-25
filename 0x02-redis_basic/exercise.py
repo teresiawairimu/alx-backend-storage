@@ -122,3 +122,27 @@ class Cache:
             The retrieved value as an integer, None if the key doesn't exist
         """
         return self.get(key, int)
+
+    @staticmethod
+    def replay(method: Callable) -> None:
+        """Displays the history of calls of a function
+
+        Parameters
+        method: Callable
+            The method whose call history will be displayed
+
+        Returns
+        None
+            Purpose is to print call history
+        """
+        redis_instance = method.__self__._redis
+        method_name = method.__qualname__
+        input_key = f"{method_name}: inputs"
+        output_key = f"{method_name}: outputs"
+        inputs = redis_instance.lrange(input_key, 0, -1)
+        outputs = redis_instance.lrange(output_key, 0, -1)
+        print(f"{method_name} was called {len(inputs)} times:")
+        for inp, out in zip(inputs, outputs):
+            decoded_inp = inpu.decode('utf-8')
+            decoded_out = out.decode('utf-8')
+            print(f"{method_name}(*{decode_inp}) -> {decoded_out}")
