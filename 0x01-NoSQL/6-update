@@ -1,6 +1,6 @@
 // MongoDB command that adds a new attribute to a document in a collection
-db.collection.update(
-{ name: "Holberton" },
+db.school.update(
+{ name: "Holberton school" },
 { $set: { address: "972 Mission street" }},
 { multi: true }
 )
